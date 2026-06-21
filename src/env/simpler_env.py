@@ -4,6 +4,8 @@ import os
 
 import numpy as np
 
+from src.debug_log import debug_log
+
 
 MANISKILL3_ENV_IDS = {
     "widowx_spoon_on_towel": "PutSpoonOnTableClothInScene-v1",
@@ -27,6 +29,15 @@ def _to_float(value) -> float:
     if hasattr(value, "item"):
         return float(value.item())
     return float(value)
+
+
+MANISKILL3_OBS_MODE = "rgb+segmentation"
+
+
+def _to_numpy_image(image) -> np.ndarray:
+    if hasattr(image, "detach"):
+        image = image.detach().cpu().numpy()
+    return np.asarray(image, dtype=np.uint8)
 
 
 class SimplerEnvWrapper:
@@ -75,7 +86,23 @@ class SimplerEnvWrapper:
 
         env_id = MANISKILL3_ENV_IDS.get(self.task_name, "PutSpoonOnTableClothInScene-v1")
         self._get_image_ms3 = get_image_from_maniskill3_obs_dict
-        self.env = gym.make(env_id, obs_mode="rgb", num_envs=1)
+        # #region agent log
+        debug_log(
+            "H1",
+            "simpler_env:_load_maniskill3",
+            "creating gym env",
+            {"env_id": env_id, "obs_mode": MANISKILL3_OBS_MODE},
+        )
+        # #endregion
+        self.env = gym.make(env_id, obs_mode=MANISKILL3_OBS_MODE, num_envs=1)
+        # #region agent log
+        debug_log(
+            "H1",
+            "simpler_env:_load_maniskill3",
+            "gym env created",
+            {"env_id": env_id, "obs_mode": MANISKILL3_OBS_MODE},
+        )
+        # #endregion
 
     def _load_maniskill2(self) -> None:
         try:
@@ -99,7 +126,16 @@ class SimplerEnvWrapper:
     def reset(self):
         obs, info = self.env.reset()
         if self.backend in ("maniskill3", "ms3"):
-            return self._get_image_ms3(self.env, obs), info
+            image = _to_numpy_image(self._get_image_ms3(self.env, obs))
+            # #region agent log
+            debug_log(
+                "H2",
+                "simpler_env:reset",
+                "ms3 reset image",
+                {"shape": list(image.shape), "dtype": str(image.dtype)},
+            )
+            # #endregion
+            return image, info
         return self._extract_image(obs), info
 
     def step(self, action: np.ndarray):
@@ -109,7 +145,7 @@ class SimplerEnvWrapper:
 
         if self.backend in ("maniskill3", "ms3"):
             success = _to_bool(info.get("success", False)) if isinstance(info, dict) else False
-            image = self._get_image_ms3(self.env, obs)
+            image = _to_numpy_image(self._get_image_ms3(self.env, obs))
         else:
             success = bool(info.get("success", _to_float(reward) > 0))
             image = self._extract_image(obs)

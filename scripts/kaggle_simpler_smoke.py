@@ -57,7 +57,7 @@ def main() -> int:
         raise
 
     try:
-        env = gym.make("PutSpoonOnTableClothInScene-v1", obs_mode="rgb", num_envs=1)
+        env = gym.make("PutSpoonOnTableClothInScene-v1", obs_mode="rgb+segmentation", num_envs=1)
         obs, _info = env.reset()
         debug_log(
             "H3",

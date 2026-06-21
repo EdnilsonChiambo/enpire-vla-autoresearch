@@ -37,7 +37,15 @@ MANISKILL3_OBS_MODE = "rgb+segmentation"
 def _to_numpy_image(image) -> np.ndarray:
     if hasattr(image, "detach"):
         image = image.detach().cpu().numpy()
-    return np.asarray(image, dtype=np.uint8)
+    arr = np.asarray(image, dtype=np.uint8)
+    # ManiSkill3 with num_envs=1 returns batched obs: (1, H, W, 3)
+    while arr.ndim > 3 and arr.shape[0] == 1:
+        arr = arr[0]
+    if arr.ndim == 3 and arr.shape[-1] == 4:
+        arr = arr[..., :3]
+    if arr.ndim != 3 or arr.shape[-1] != 3:
+        raise ValueError(f"Expected HWC image (H, W, 3), got shape {arr.shape}")
+    return np.ascontiguousarray(arr, dtype=np.uint8)
 
 
 class SimplerEnvWrapper:

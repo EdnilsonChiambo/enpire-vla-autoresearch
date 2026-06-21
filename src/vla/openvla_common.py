@@ -31,7 +31,18 @@ def predict_openvla_action(model, processor, image: np.ndarray, instruction: str
 
     from src.debug_log import debug_log
 
-    pil_image = Image.fromarray(image.astype(np.uint8))
+    image = np.asarray(image, dtype=np.uint8)
+    while image.ndim > 3 and image.shape[0] == 1:
+        image = image[0]
+    # #region agent log
+    debug_log(
+        "H3",
+        "openvla_common:predict",
+        "image shape before PIL",
+        {"shape": list(image.shape), "dtype": str(image.dtype)},
+    )
+    # #endregion
+    pil_image = Image.fromarray(image)
     prompt = f"In: What action should the robot take to {instruction.lower()}?\nOut:"
 
     try:

@@ -48,7 +48,8 @@ flowchart LR
 enpire-vla-autoresearch/
 ├── config/
 │   ├── default.yaml          # local dev defaults
-│   └── kaggle.yaml           # T4 + openvla-4bit + simpler
+│   ├── kaggle.yaml           # T4 + openvla-4bit + simpler (spoon task)
+│   └── kaggle-demo.yaml      # carrot-on-plate demo (more episodes, clearer prompt deltas)
 ├── notebooks/
 │   └── kaggle_setup.ipynb    # one-click Kaggle setup
 ├── src/
@@ -151,6 +152,18 @@ export ENV_BACKEND=simpler
 export OPENAI_API_KEY=sk-...
 
 python -m src.loop_runner --config config/kaggle.yaml
+```
+
+### Demo config (better prompt-modifier signal)
+
+For a Bridge-aligned task where OpenVLA is more likely to show non-zero success and visible differences between LLM modifiers, use [`config/kaggle-demo.yaml`](config/kaggle-demo.yaml):
+
+- Task: `PutCarrotOnPlateInScene-v1` (`widowx_carrot_on_plate`)
+- 20 episodes × 5 iterations (slower, but statistically meaningful)
+- Logs written to `logs/kaggle_demo/` (separate from the spoon run)
+
+```bash
+python -m src.loop_runner --config config/kaggle-demo.yaml
 ```
 
 ### VLA backend options

@@ -1,0 +1,30 @@
+# Demo config: Bridge-aligned task where OpenVLA is more likely to show
+# non-zero success and visible differences between prompt modifiers.
+# Run: python -m src.loop_runner --config config/kaggle-demo.yaml
+
+task:
+  base_instruction: "pick up the carrot and place it on the plate"
+  episodes: 20
+
+loop:
+  iterations: 5
+
+env:
+  backend: simpler
+  simpler_backend: maniskill3
+  simpler_task: widowx_carrot_on_plate
+
+vla:
+  backend: openvla-4bit
+  model_id: openvla/openvla-7b
+  policy_setup: bridge_orig
+
+llm:
+  provider: openai
+  model: gpt-4o-mini
+
+paths:
+  logs_dir: logs/kaggle_demo
+  latest_eval_log: logs/kaggle_demo/latest_eval_log.txt
+  history_tree_log: logs/kaggle_demo/history_tree.log
+  best_run: logs/kaggle_demo/best_run.json

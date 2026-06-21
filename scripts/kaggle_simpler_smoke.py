@@ -37,6 +37,11 @@ def main() -> int:
         raise
 
     try:
+        from src.env.maniskill_assets import configure_maniskill_runtime, ensure_maniskill3_assets
+
+        configure_maniskill_runtime()
+        ensure_maniskill3_assets("widowx_spoon_on_towel")
+
         import gymnasium as gym
         import mani_skill
         import mani_skill.envs.tasks.digital_twins.bridge_dataset_eval  # noqa: F401

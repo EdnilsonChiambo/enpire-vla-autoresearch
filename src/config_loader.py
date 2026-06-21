@@ -23,6 +23,10 @@ def load_config(config_path: Path | None = None) -> dict[str, Any]:
         config["env"]["simpler_backend"] = os.getenv(
             "SIMPLER_BACKEND", config["env"].get("simpler_backend", "maniskill3")
         )
+    if config.get("env", {}).get("backend") == "simpler":
+        from src.env.maniskill_assets import configure_maniskill_runtime
+
+        configure_maniskill_runtime()
     return config
 
 

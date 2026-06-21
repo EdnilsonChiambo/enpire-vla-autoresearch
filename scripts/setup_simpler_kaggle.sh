@@ -23,4 +23,8 @@ python -m pip install -q -e "$SIMPLER_DIR"
 # ManiSkill can upgrade transformers; OpenVLA needs 4.40.2 + tokenizers 0.19.x
 python -m pip install -q -r requirements-kaggle.txt
 
+export MS_SKIP_ASSET_DOWNLOAD_PROMPT=1
+export MS_ASSET_DIR="${MS_ASSET_DIR:-/kaggle/working/.maniskill}"
+python -m mani_skill.utils.download_asset bridge_v2_real2sim -y
+
 python -c "import gymnasium as gym; import mani_skill; import simpler_env; print('SIMPLER ManiSkill3 OK')"

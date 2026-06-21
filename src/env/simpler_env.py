@@ -65,8 +65,13 @@ class SimplerEnvWrapper:
                 "  git clone -b maniskill3 --depth 1 https://github.com/simpler-env/SimplerEnv\n"
                 "  pip install git+https://github.com/haosulab/ManiSkill.git tyro==0.8.5\n"
                 "  pip install -e SimplerEnv\n"
+                "  python -m mani_skill.utils.download_asset bridge_v2_real2sim -y\n"
                 f"Original error: {exc}"
             ) from exc
+
+        from src.env.maniskill_assets import ensure_maniskill3_assets
+
+        ensure_maniskill3_assets(self.task_name)
 
         env_id = MANISKILL3_ENV_IDS.get(self.task_name, "PutSpoonOnTableClothInScene-v1")
         self._get_image_ms3 = get_image_from_maniskill3_obs_dict

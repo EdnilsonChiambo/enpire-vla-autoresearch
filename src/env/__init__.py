@@ -4,10 +4,13 @@ from src.env.simpler_env import SimplerEnvWrapper
 __all__ = ["PushTEnvWrapper", "SimplerEnvWrapper", "create_env"]
 
 
-def create_env(backend: str, simpler_task: str | None = None, **kwargs):
+def create_env(backend: str, simpler_task: str | None = None, simpler_backend: str | None = None, **kwargs):
     backend = backend.lower()
     if backend == "pusht":
         return PushTEnvWrapper()
     if backend == "simpler":
-        return SimplerEnvWrapper(task=simpler_task or "widowx_spoon_on_towel")
+        return SimplerEnvWrapper(
+            task=simpler_task or "widowx_spoon_on_towel",
+            simpler_backend=simpler_backend,
+        )
     raise ValueError(f"Unknown env backend: {backend}")

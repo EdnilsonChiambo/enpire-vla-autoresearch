@@ -19,6 +19,10 @@ def load_config(config_path: Path | None = None) -> dict[str, Any]:
 
     config["env"]["backend"] = os.getenv("ENV_BACKEND", config["env"]["backend"])
     config["vla"]["backend"] = os.getenv("VLA_BACKEND", config["vla"]["backend"])
+    if "simpler_backend" in config.get("env", {}):
+        config["env"]["simpler_backend"] = os.getenv(
+            "SIMPLER_BACKEND", config["env"].get("simpler_backend", "maniskill3")
+        )
     return config
 
 

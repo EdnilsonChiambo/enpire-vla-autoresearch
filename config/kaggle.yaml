@@ -1,5 +1,5 @@
 task:
-  base_instruction: "pick up the red mug"
+  base_instruction: "pick up the spoon"
   episodes: 5
 
 loop:
@@ -7,6 +7,7 @@ loop:
 
 env:
   backend: simpler
+  simpler_backend: maniskill3
   simpler_task: widowx_spoon_on_towel
 
 vla:

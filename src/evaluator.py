@@ -43,7 +43,11 @@ def run_evaluation(
     episodes = int(config["task"]["episodes"])
     final_instruction = f"{base_instruction} {prompt_modifier}".strip()
 
-    env = create_env(env_backend, simpler_task=config["env"].get("simpler_task"))
+    env = create_env(
+        env_backend,
+        simpler_task=config["env"].get("simpler_task"),
+        simpler_backend=config["env"].get("simpler_backend"),
+    )
     vla = create_vla_adapter(
         vla_backend,
         model_id=config["vla"].get("model_id"),

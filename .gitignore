@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+
+# Secrets and local config
+.env
+
+# Runtime logs and artifacts
+logs/*
+!logs/.gitkeep
+
+# Model checkpoints and caches
+checkpoints/
+*.pt
+*.safetensors
+.huggingface/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store

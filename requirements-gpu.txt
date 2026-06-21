@@ -1,0 +1,14 @@
+-r requirements.txt
+
+# OpenVLA + SIMPLER stack (NVIDIA GPU, CUDA 11.8+ required)
+torch==2.3.1
+torchvision==0.18.1
+timm==0.9.10
+tokenizers==0.15.2
+accelerate==0.32.1
+transformers>=4.40.0
+# flash-attn==2.6.1  # install separately: pip install flash-attn==2.6.1 --no-build-isolation
+
+# SIMPLER env (clone and install separately):
+# git clone https://github.com/simpler-env/SimplerEnv
+# cd SimplerEnv && pip install -e .

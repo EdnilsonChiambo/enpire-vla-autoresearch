@@ -1,0 +1,25 @@
+task:
+  base_instruction: "pick up the red mug"
+  episodes: 5
+
+loop:
+  iterations: 5
+
+env:
+  backend: pusht
+  simpler_task: widowx_spoon_on_towel
+
+vla:
+  backend: mock
+  model_id: openvla/openvla-7b
+  policy_setup: widowx_bridge
+
+llm:
+  provider: openai
+  model: gpt-4o-mini
+
+paths:
+  logs_dir: logs
+  latest_eval_log: logs/latest_eval_log.txt
+  history_tree_log: logs/history_tree.log
+  best_run: logs/best_run.json

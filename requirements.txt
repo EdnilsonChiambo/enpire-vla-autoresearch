@@ -1,0 +1,9 @@
+openai>=1.30.0
+anthropic>=0.25.0
+pyyaml>=6.0
+python-dotenv>=1.0.0
+gymnasium>=0.29.0
+gym-pusht>=0.1.6
+pymunk>=6.6.0,<7.0.0
+numpy>=1.24.0
+Pillow>=10.0.0

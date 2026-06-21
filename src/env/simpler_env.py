@@ -26,7 +26,7 @@ class SimplerEnvWrapper:
             raise ImportError(
                 "SIMPLER is not fully installed. Run:\n"
                 "  git clone --recurse-submodules https://github.com/simpler-env/SimplerEnv\n"
-                "  pip install numpy==1.24.4\n"
+                "  pip install 'numpy>=1.26,<2.0'  # use 1.24.4 only on Python 3.10/3.11\n"
                 "  pip install -e SimplerEnv/ManiSkill2_real2sim\n"
                 "  pip install -e SimplerEnv\n"
                 f"Original error: {exc}"

@@ -10,7 +10,7 @@ else
   git -C "$SIMPLER_DIR" submodule update --init --recursive
 fi
 
-python -m pip install -q "numpy==1.24.4"
+python -m pip install -q "numpy>=1.26,<2.0"
 python -m pip install -q -e "$SIMPLER_DIR/ManiSkill2_real2sim"
 python -m pip install -q -e "$SIMPLER_DIR"
 

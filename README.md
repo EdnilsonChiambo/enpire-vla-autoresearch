@@ -46,13 +46,17 @@ flowchart LR
 
 ```
 enpire-vla-autoresearch/
-├── config/default.yaml       # task, loop, env, vla, llm settings
+├── config/
+│   ├── default.yaml          # local dev defaults
+│   └── kaggle.yaml           # T4 + openvla-4bit + simpler
+├── notebooks/
+│   └── kaggle_setup.ipynb    # one-click Kaggle setup
 ├── src/
 │   ├── loop_runner.py        # orchestrator
 │   ├── researcher_agent.py   # LLM evolution (PI + E)
 │   ├── evaluator.py          # env + rollout (EN + R)
 │   ├── env/                  # PushT and SIMPLER wrappers
-│   └── vla/                  # mock, OpenVLA, Octo adapters
+│   └── vla/                  # mock, OpenVLA bf16/4bit, Octo adapters
 ├── logs/                     # runtime output (gitignored)
 └── scripts/                  # setup helpers
 ```
@@ -117,9 +121,52 @@ Update `config/default.yaml` if needed, then:
 python -m src.loop_runner
 ```
 
-**Memory note:** OpenVLA-7B needs ~1×3090. Run only one env + one inference process at a time.
+**Memory note:** OpenVLA-7B (bf16) needs ~16GB VRAM. On **16GB GPUs (Kaggle T4, Colab T4)**, use `openvla-4bit` instead (see below).
 
-## Configuration
+## Kaggle Free GPU (T4 x2)
+
+Kaggle gives **2× Tesla T4 (16GB each)** and **~30 GPU hours/week**. This repo uses **one T4** with **4-bit OpenVLA** (~6–7GB VRAM), leaving headroom for SIMPLER.
+
+### Fastest path: upload the notebook
+
+1. Go to [kaggle.com/code](https://www.kaggle.com/code) → **New Notebook**
+2. Settings → Accelerator → **GPU T4 x2**, enable **Internet**
+3. Add-ons → Secrets → `OPENAI_API_KEY`
+4. Upload or copy [`notebooks/kaggle_setup.ipynb`](notebooks/kaggle_setup.ipynb)
+5. Run all cells
+
+### Manual setup on Kaggle
+
+```bash
+git clone https://github.com/EdnilsonChiambo/enpire-vla-autoresearch.git
+cd enpire-vla-autoresearch
+pip install -r requirements-kaggle.txt
+
+# Optional: SIMPLER
+git clone --depth 1 https://github.com/simpler-env/SimplerEnv ../SimplerEnv
+pip install -e ../SimplerEnv
+
+export VLA_BACKEND=openvla-4bit
+export ENV_BACKEND=simpler
+export OPENAI_API_KEY=sk-...
+
+python -m src.loop_runner --config config/kaggle.yaml
+```
+
+### VLA backend options
+
+| Backend | VRAM | Best for |
+|---|---|---|
+| `mock` | 0 | Loop testing (Mac / Kaggle CPU) |
+| `openvla-4bit` | ~6–7GB | **Kaggle T4, Colab T4** |
+| `openvla` / `openvla-bf16` | ~16GB | RTX 3090 / A100 |
+| `octo` | ~2–4GB | Lightweight alternative |
+
+**Kaggle tips:**
+- Do not spawn a second GPU process — keep env + VLA in one Python process
+- Skip `flash-attn` on Kaggle; 4-bit adapter uses `sdpa` attention
+- Pin `accelerate==0.26.0` if you hit quantized `.to()` errors (already in `requirements-kaggle.txt`)
+
 
 Edit [`config/default.yaml`](config/default.yaml):
 
@@ -132,7 +179,7 @@ loop:
 env:
   backend: pusht          # pusht | simpler
 vla:
-  backend: mock           # mock | openvla | octo
+  backend: mock           # mock | openvla-4bit | openvla | octo
 llm:
   provider: openai        # openai | anthropic
   model: gpt-4o-mini
@@ -145,7 +192,8 @@ Environment variables in `.env` override `env.backend` and `vla.backend`.
 | Track | Environment | VLA | Hardware |
 |---|---|---|---|
 | **Dev** | Gym-PushT | mock | Mac / CPU |
-| **Research** | SIMPLER | OpenVLA-7B | NVIDIA GPU |
+| **Kaggle** | SIMPLER | openvla-4bit | 1× T4 (16GB) |
+| **Research** | SIMPLER | openvla (bf16) | RTX 3090+ |
 
 ## Roadmap
 

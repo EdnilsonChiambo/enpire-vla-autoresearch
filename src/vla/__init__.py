@@ -14,10 +14,17 @@ def create_vla_adapter(
     backend = backend.lower()
     if backend == "mock":
         return MockVLAAdapter(action_dim=action_dim)
-    if backend == "openvla":
+    if backend in ("openvla", "openvla-bf16"):
         from src.vla.openvla_adapter import OpenVLAAdapter
 
         return OpenVLAAdapter(
+            model_id=model_id or "openvla/openvla-7b",
+            policy_setup=policy_setup or "widowx_bridge",
+        )
+    if backend in ("openvla-4bit", "openvla_4bit"):
+        from src.vla.openvla_adapter_4bit import OpenVLA4BitAdapter
+
+        return OpenVLA4BitAdapter(
             model_id=model_id or "openvla/openvla-7b",
             policy_setup=policy_setup or "widowx_bridge",
         )

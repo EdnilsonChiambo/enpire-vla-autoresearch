@@ -1,0 +1,15 @@
+-r requirements.txt
+
+# Kaggle T4 / Colab T4 — 4-bit OpenVLA (~6-7GB VRAM)
+torch==2.3.1
+torchvision==0.18.1
+timm==0.9.10
+tokenizers==0.15.2
+accelerate==0.26.0
+transformers>=4.40.0,<4.41.0
+bitsandbytes>=0.43.0
+sentencepiece>=0.2.0
+
+# Optional: SIMPLER (install manually in notebook — see notebooks/kaggle_setup.ipynb)
+# git clone https://github.com/simpler-env/SimplerEnv
+# cd SimplerEnv && pip install -e .

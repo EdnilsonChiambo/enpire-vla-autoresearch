@@ -61,6 +61,7 @@ class SimplerEnvWrapper:
         except ImportError as exc:
             raise ImportError(
                 "ManiSkill3 SIMPLER is not installed. On Kaggle (Python 3.12) run:\n"
+                "  rm -rf SimplerEnv  # if you previously cloned main\n"
                 "  git clone -b maniskill3 --depth 1 https://github.com/simpler-env/SimplerEnv\n"
                 "  pip install git+https://github.com/haosulab/ManiSkill.git tyro==0.8.5\n"
                 "  pip install -e SimplerEnv\n"

@@ -24,12 +24,17 @@ class OpenVLA4BitAdapter(VLAAdapter):
     def _load_model(self) -> None:
         try:
             import torch
-            from transformers import AutoModelForVision2Seq, AutoProcessor, BitsAndBytesConfig
+            from transformers import AutoProcessor, BitsAndBytesConfig
+
+            from src.vla.openvla_common import get_openvla_auto_model_class
+
+            AutoModelForVision2Seq = get_openvla_auto_model_class()
         except ImportError as exc:
             debug_log("H1", "openvla_4bit:_load_model", "import failed", {"error": str(exc)})
             raise ImportError(
                 "OpenVLA 4-bit requires GPU dependencies. "
-                "Install with: pip install -r requirements-kaggle.txt"
+                "Install with: pip install -r requirements-kaggle.txt "
+                "(re-run after ManiSkill install if transformers was upgraded)."
             ) from exc
 
         debug_log(

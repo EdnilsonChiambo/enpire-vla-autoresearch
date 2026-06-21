@@ -22,7 +22,11 @@ class OpenVLAAdapter(VLAAdapter):
     def _load_model(self) -> None:
         try:
             import torch
-            from transformers import AutoModelForVision2Seq, AutoProcessor
+            from transformers import AutoProcessor
+
+            from src.vla.openvla_common import get_openvla_auto_model_class
+
+            AutoModelForVision2Seq = get_openvla_auto_model_class()
         except ImportError as exc:
             raise ImportError(
                 "OpenVLA requires GPU dependencies. Install with: pip install -r requirements-gpu.txt"

@@ -20,4 +20,7 @@ fi
 python -m pip install -q "git+https://github.com/haosulab/ManiSkill.git" "tyro==0.8.5" "torch==2.3.1"
 python -m pip install -q -e "$SIMPLER_DIR"
 
+# ManiSkill can upgrade transformers; OpenVLA needs 4.40.2 + tokenizers 0.19.x
+python -m pip install -q -r requirements-kaggle.txt
+
 python -c "import gymnasium as gym; import mani_skill; import simpler_env; print('SIMPLER ManiSkill3 OK')"

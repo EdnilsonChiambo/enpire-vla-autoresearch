@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 
+from src.debug_log import debug_log
 from src.vla.base import VLAAdapter
 from src.vla.openvla_common import predict_openvla_action
 
@@ -25,10 +26,22 @@ class OpenVLA4BitAdapter(VLAAdapter):
             import torch
             from transformers import AutoModelForVision2Seq, AutoProcessor, BitsAndBytesConfig
         except ImportError as exc:
+            debug_log("H1", "openvla_4bit:_load_model", "import failed", {"error": str(exc)})
             raise ImportError(
                 "OpenVLA 4-bit requires GPU dependencies. "
                 "Install with: pip install -r requirements-kaggle.txt"
             ) from exc
+
+        debug_log(
+            "H2",
+            "openvla_4bit:_load_model",
+            "pre-load env",
+            {
+                "cuda_available": torch.cuda.is_available(),
+                "model_id": self.model_id,
+                "policy_setup": self.policy_setup,
+            },
+        )
 
         bnb_config = BitsAndBytesConfig(
             load_in_4bit=True,
@@ -36,16 +49,34 @@ class OpenVLA4BitAdapter(VLAAdapter):
             bnb_4bit_quant_type="nf4",
         )
 
-        self._processor = AutoProcessor.from_pretrained(self.model_id, trust_remote_code=True)
-        self._model = AutoModelForVision2Seq.from_pretrained(
-            self.model_id,
-            torch_dtype=torch.bfloat16,
-            quantization_config=bnb_config,
-            low_cpu_mem_usage=True,
-            trust_remote_code=True,
-            device_map="auto",
-            attn_implementation="sdpa",
-        )
+        try:
+            self._processor = AutoProcessor.from_pretrained(self.model_id, trust_remote_code=True)
+            debug_log("H3", "openvla_4bit:_load_model", "processor loaded")
+            self._model = AutoModelForVision2Seq.from_pretrained(
+                self.model_id,
+                torch_dtype=torch.bfloat16,
+                quantization_config=bnb_config,
+                low_cpu_mem_usage=True,
+                trust_remote_code=True,
+                device_map="auto",
+                attn_implementation="sdpa",
+            )
+            debug_log(
+                "H3",
+                "openvla_4bit:_load_model",
+                "model loaded",
+                {"device_map": getattr(self._model, "hf_device_map", None)},
+            )
+        except Exception as exc:
+            import traceback
+
+            debug_log(
+                "H3",
+                "openvla_4bit:_load_model",
+                "from_pretrained failed",
+                {"error": str(exc), "type": type(exc).__name__, "traceback": traceback.format_exc()[-800:]},
+            )
+            raise
 
     @property
     def name(self) -> str:

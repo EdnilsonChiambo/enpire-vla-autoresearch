@@ -24,18 +24,15 @@ class SimplerEnvWrapper:
             import simpler_env  # type: ignore
         except ImportError as exc:
             raise ImportError(
-                "SIMPLER is not installed. Clone https://github.com/simpler-env/SimplerEnv "
-                "and run `pip install -e .` inside that repo."
+                "SIMPLER is not fully installed. Run:\n"
+                "  git clone --recurse-submodules https://github.com/simpler-env/SimplerEnv\n"
+                "  pip install numpy==1.24.4\n"
+                "  pip install -e SimplerEnv/ManiSkill2_real2sim\n"
+                "  pip install -e SimplerEnv\n"
+                f"Original error: {exc}"
             ) from exc
 
-        # SimplerEnv API may vary by version; try common entry points.
-        if hasattr(simpler_env, "make"):
-            self.env = simpler_env.make(self.task_name)
-        else:
-            from simpler_env.utils.env.observation_utils import get_image_from_maniskill2_obs_dict  # type: ignore
-
-            self._get_image = get_image_from_maniskill2_obs_dict
-            self.env = simpler_env.make(self.task_name)
+        self.env = simpler_env.make(self.task_name)
 
     @property
     def name(self) -> str:

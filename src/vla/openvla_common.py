@@ -5,22 +5,22 @@ import numpy as np
 
 def get_openvla_auto_model_class():
     """Return transformers auto-class for OpenVLA (version-compatible)."""
+    import transformers
+    from packaging import version
+
+    if version.parse(transformers.__version__) >= version.parse("4.46.0"):
+        from transformers import AutoModelForImageTextToText
+
+        return AutoModelForImageTextToText
+
     try:
         from transformers import AutoModelForVision2Seq
 
         return AutoModelForVision2Seq
     except ImportError:
-        pass
-
-    try:
         from transformers import AutoModelForImageTextToText
 
         return AutoModelForImageTextToText
-    except ImportError as exc:
-        raise ImportError(
-            "OpenVLA requires transformers==4.40.2. "
-            "ManiSkill may have upgraded it — run: pip install -r requirements-kaggle.txt"
-        ) from exc
 
 
 def predict_openvla_action(model, processor, image: np.ndarray, instruction: str, policy_setup: str):

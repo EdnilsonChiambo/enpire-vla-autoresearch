@@ -4,6 +4,13 @@ from __future__ import annotations
 import os
 import sys
 import traceback
+from pathlib import Path
+
+# Ensure repo root is on sys.path when run as: python scripts/kaggle_openvla_smoke.py
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 
 import numpy as np
 
